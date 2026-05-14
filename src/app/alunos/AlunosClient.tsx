@@ -2,10 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Users } from "lucide-react";
-import { Header } from "../../../components/Header";
-import { Sidebar } from "../../../components/Sidebar";
-import { DataTable, EmptyState, Loading, PageTitle } from "../../../components/ui";
-import type { DataTableColumn } from "../../../components/ui";
+import { Header } from "../../components/Header";
+import { Sidebar } from "../../components/Sidebar";
+import { DataTable, EmptyState, Loading, PageTitle } from "../../components/ui";
+import type { DataTableColumn } from "../../components/ui";
 import { alunosMock, type Aluno } from "../../../mocks/alunos";
 import { fetchMockData } from "../../../mocks/fetchData";
 
