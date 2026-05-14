@@ -1,31 +1,50 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Book, Clock, User, Plus, Search } from "lucide-react";
-import Link from "next/link";
-import { Header } from "../../components/Header";
-import { Sidebar } from "../../components/Sidebar";
-import { PageTitle, EmptyState } from "../../components/ui";
-
-/* =========================
-   DADOS MOCADOS
-========================= */
-const DISCIPLINAS_MOCK = [
-  { id: '1', nome: 'Matemática', cargaHoraria: 80, professorResponsavel: 'Dr. Ricardo Braga' },
-  { id: '2', nome: 'História', cargaHoraria: 40, professorResponsavel: 'Profa. Helena Souza' },
-  { id: '3', nome: 'Física Química', cargaHoraria: 60, professorResponsavel: 'Marcos Vinícius' },
-  { id: '4', nome: 'Língua Portuguesa', cargaHoraria: 80, professorResponsavel: 'Ana Cláudia' },
-  { id: '5', nome: 'Artes', cargaHoraria: 20, professorResponsavel: 'Beatriz Lopes' },
-];
+import { Book, Clock, Plus, Search, User } from "lucide-react";
+import { toast } from "react-toastify";
+import { Header } from "../../../components/Header";
+import { Sidebar } from "../../../components/Sidebar";
+import { EmptyState, FormModal, PageTitle } from "../../../components/ui";
+import { useEscola } from "@/contexts/EscolaContext";
 
 export default function DisciplinasClient() {
+  const { disciplinas, adicionarDisciplina } = useEscola();
   const [busca, setBusca] = useState("");
+  const [modalAberto, setModalAberto] = useState(false);
+  const [formulario, setFormulario] = useState({
+    nome: "",
+    cargaHoraria: "",
+    professorResponsavel: "",
+    turma: "",
+  });
 
   const disciplinasFiltradas = useMemo(() => {
-    return DISCIPLINAS_MOCK.filter((d) =>
+    return disciplinas.filter((d) =>
       d.nome.toLowerCase().includes(busca.toLowerCase())
     );
-  }, [busca]);
+  }, [busca, disciplinas]);
+
+  function atualizarCampo(campo: keyof typeof formulario, valor: string) {
+    setFormulario((estadoAtual) => ({ ...estadoAtual, [campo]: valor }));
+  }
+
+  function fecharModal() {
+    setModalAberto(false);
+    setFormulario({
+      nome: "",
+      cargaHoraria: "",
+      professorResponsavel: "",
+      turma: "",
+    });
+  }
+
+  function salvarDisciplina(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    adicionarDisciplina(formulario);
+    toast.success("Disciplina cadastrada com sucesso!");
+    fecharModal();
+  }
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -41,12 +60,13 @@ export default function DisciplinasClient() {
               title="Disciplinas"
               subtitle="Catálogo de matérias e carga horária anual."
             />
-            <Link 
-              href="/disciplinas/novo" 
+            <button
+              type="button"
+              onClick={() => setModalAberto(true)}
               className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-semibold transition-all shadow-sm"
             >
               <Plus className="h-5 w-5" /> Nova Disciplina
-            </Link>
+            </button>
           </div>
 
           {/* BARRA DE BUSCA */}
@@ -98,6 +118,77 @@ export default function DisciplinasClient() {
           )}
         </div>
       </main>
+
+      <FormModal
+        open={modalAberto}
+        onClose={fecharModal}
+        title="Cadastrar Disciplina"
+        description="Cadastre uma nova disciplina sem sair da página."
+      >
+        <form onSubmit={salvarDisciplina} className="space-y-5">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Nome da Disciplina</label>
+            <input
+              value={formulario.nome}
+              onChange={(event) => atualizarCampo("nome", event.target.value)}
+              required
+              className="w-full rounded-xl border border-slate-200 p-3"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium">Carga Horaria</label>
+              <input
+                type="number"
+                min="1"
+                value={formulario.cargaHoraria}
+                onChange={(event) => atualizarCampo("cargaHoraria", event.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-200 p-3"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Turma</label>
+              <input
+                value={formulario.turma}
+                onChange={(event) => atualizarCampo("turma", event.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-200 p-3"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Professor Responsavel</label>
+            <input
+              value={formulario.professorResponsavel}
+              onChange={(event) =>
+                atualizarCampo("professorResponsavel", event.target.value)
+              }
+              required
+              className="w-full rounded-xl border border-slate-200 p-3"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={fecharModal}
+              className="rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-600"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="rounded-xl bg-amber-500 px-4 py-3 font-semibold text-white hover:bg-amber-600"
+            >
+              Salvar Disciplina
+            </button>
+          </div>
+        </form>
+      </FormModal>
     </div>
   );
 }

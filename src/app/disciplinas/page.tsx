@@ -1,6 +1,6 @@
 "use client";
 
-import DisciplinasClient from "./DisciplinasClient";
+import DisciplinasClient from "./DisciplinasContext";
 
 export default function DisciplinasPage() {
   return <DisciplinasClient />;
