@@ -6,12 +6,14 @@ import {
   GraduationCap,
   BookOpen,
   CalendarCheck,
+  School,
 } from "lucide-react";
 
 const menuItems = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/" },
   { name: "Alunos", icon: Users, href: "/alunos" },
   { name: "Professores", icon: GraduationCap, href: "/professores" },
+  { name: "Turmas", icon: School, href: "/turmas" },
   { name: "Disciplinas", icon: BookOpen, href: "/disciplinas" },
   { name: "Frequência", icon: CalendarCheck, href: "/frequencia" },
 ];
