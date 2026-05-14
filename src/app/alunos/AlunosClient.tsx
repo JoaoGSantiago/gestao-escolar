@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Users } from "lucide-react";
+import Link from "next/link";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import { DataTable, EmptyState, Loading, PageTitle } from "../../../components/ui";
@@ -13,7 +14,18 @@ const SIMULAR_ERRO = false;
 const SIMULAR_VAZIO = false;
 
 const colunas: DataTableColumn<Aluno>[] = [
-  { key: "nome", header: "Nome", render: (aluno) => aluno.nome },
+  {
+    key: "nome",
+    header: "Nome",
+    render: (aluno) => (
+      <Link
+        href={`/alunos/${aluno.id}`}
+        className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+      >
+        {aluno.nome}
+      </Link>
+    ),
+  },
   { key: "email", header: "Email", render: (aluno) => aluno.email },
   { key: "turma", header: "Turma", render: (aluno) => aluno.turma },
 ];
