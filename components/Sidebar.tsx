@@ -5,7 +5,6 @@ import {
   Users,
   GraduationCap,
   BookOpen,
-  CalendarCheck,
   School,
 } from "lucide-react";
 
@@ -15,7 +14,6 @@ const menuItems = [
   { name: "Professores", icon: GraduationCap, href: "/professores" },
   { name: "Turmas", icon: School, href: "/turmas" },
   { name: "Disciplinas", icon: BookOpen, href: "/disciplinas" },
-  { name: "Frequência", icon: CalendarCheck, href: "/frequencia" },
 ];
 
 export function Sidebar() {
