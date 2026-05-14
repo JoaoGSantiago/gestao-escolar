@@ -1,37 +1,39 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, GraduationCap } from "lucide-react";
-import { Header } from "../../../components/Header";
-import { Sidebar } from "../../../components/Sidebar";
-import { DataTable, EmptyState, Loading, PageTitle } from "../../../components/ui";
-import type { DataTableColumn } from "../../../components/ui";
-import { fetchMockData } from "../../../mocks/fetchData";
-import { professoresMock, type Professor } from "../../../mocks/professores";
-
-const SIMULAR_ERRO = false;
-const SIMULAR_VAZIO = false;
+import { useMemo, useState } from "react";
+import { AlertCircle, GraduationCap, Plus } from "lucide-react";
+import Link from "next/link";
+import { Header } from "../../components/Header";
+import { Sidebar } from "../../components/Sidebar";
+import { DataTable, EmptyState, PageTitle } from "../../components/ui";
+import type { DataTableColumn } from "../../components/ui";
+import { useEscola, type Professor } from "@/contexts/EscolaContext";
 
 const colunas: DataTableColumn<Professor>[] = [
-  { key: "nome", header: "Nome", render: (professor) => professor.nome },
-  { key: "email", header: "Email", render: (professor) => professor.email },
-  {
-    key: "disciplina",
-    header: "Disciplina",
-    render: (professor) => professor.disciplina,
+  { key: "nome", header: "Nome", render: (p) => p.nome },
+  { key: "disciplina", header: "Disciplina", render: (p) => p.disciplina },
+  { key: "email", header: "Email", render: (p) => p.email },
+  { 
+    key: "status", 
+    header: "Status", 
+    render: (p) => (
+      <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.status === 'Ativo' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+        {p.status}
+      </span>
+    ) 
   },
 ];
 
 export default function ProfessoresClient() {
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["professores"],
-    queryFn: () =>
-      fetchMockData(professoresMock, {
-        simularErro: SIMULAR_ERRO,
-        simularVazio: SIMULAR_VAZIO,
-      }),
-    retry: false,
-  });
+  const { professores } = useEscola();
+  const [busca, setBusca] = useState("");
+
+  const professoresFiltrados = useMemo(() => {
+    return professores.filter((p) =>
+      p.nome.toLowerCase().includes(busca.toLowerCase()) ||
+      p.disciplina.toLowerCase().includes(busca.toLowerCase())
+    );
+  }, [busca, professores]);
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -40,45 +42,40 @@ export default function ProfessoresClient() {
 
       <main className="px-4 py-6 md:ml-64 md:px-10">
         <div className="mx-auto max-w-6xl space-y-6">
-          <PageTitle
-            title="Professores"
-            subtitle="Dados mockados carregados com useQuery."
+          <div className="flex justify-between items-end">
+            <PageTitle
+              title="Professores"
+              subtitle="Gerenciamento do corpo docente da instituição."
+            />
+            <Link 
+              href="/professores/novo" 
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-semibold transition-all"
+            >
+              <Plus className="h-5 w-5" /> Novo Professor
+            </Link>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Buscar por nome ou disciplina..."
+            className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
           />
 
-          {isLoading ? <Loading label="Carregando professores..." /> : null}
-
-          {isError ? (
-            <EmptyState
-              title="Nao foi possivel carregar os professores"
-              description="Esse e um erro fake para demonstrar o tratamento com useQuery."
-              icon={<AlertCircle className="h-6 w-6" />}
-              action={
-                <button
-                  type="button"
-                  onClick={() => refetch()}
-                  className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
-                >
-                  Tentar novamente
-                </button>
-              }
+          {professoresFiltrados.length > 0 ? (
+            <DataTable 
+              data={professoresFiltrados} 
+              columns={colunas} 
+              rowKey={(p) => p.id} 
             />
-          ) : null}
-
-          {!isLoading && !isError ? (
-            data && data.length > 0 ? (
-              <DataTable
-                data={data}
-                columns={colunas}
-                rowKey={(professor) => professor.id}
-              />
-            ) : (
-              <EmptyState
-                title="Nenhum professor cadastrado"
-                description="Nao ha dados para mostrar no momento."
-                icon={<GraduationCap className="h-6 w-6" />}
-              />
-            )
-          ) : null}
+          ) : (
+            <EmptyState
+              title={busca ? "Nenhum resultado" : "Nenhum professor cadastrado"}
+              description={busca ? `Não encontramos nada para "${busca}"` : "Comece adicionando um novo professor ao sistema."}
+              icon={<GraduationCap className="h-6 w-6" />}
+            />
+          )}
         </div>
       </main>
     </div>
