@@ -8,7 +8,7 @@
 ---
 
 ## 📝 Sobre o Projeto
-Este sistema foi desenvolvido para a disciplina de **Programação Web** com o objetivo de facilitar a gestão acadêmica. Atualmente, o projeto conta com uma interface moderna, totalmente responsiva e preparada para integração com APIs.
+Este sistema foi desenvolvido para a disciplina de **Programação Web** com o objetivo de facilitar a gestão acadêmica. Atualmente, o projeto conta com uma interface moderna e preparada para integração com APIs.
 
 ## 🚀 Tecnologias Utilizadas
 
