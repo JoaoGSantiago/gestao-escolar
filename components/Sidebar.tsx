@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "/" },
+  { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   { name: "Alunos", icon: Users, href: "/alunos" },
   { name: "Professores", icon: GraduationCap, href: "/professores" },
   { name: "Turmas", icon: School, href: "/turmas" },

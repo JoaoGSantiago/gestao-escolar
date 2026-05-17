@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "/" },
+  { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   { name: "Alunos", icon: Users, href: "/alunos" },
   { name: "Professores", icon: GraduationCap, href: "/professores" },
   { name: "Turmas", icon: School, href: "/turmas" },
@@ -40,7 +40,7 @@ export function Header() {
           )}
         </button>
 
-        <Link href="/" className="flex items-center">
+        <Link href="/dashboard" className="flex items-center">
           <Image
             src="/image1.png"
             alt="Edu Gestão"

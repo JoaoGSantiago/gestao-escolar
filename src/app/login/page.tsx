@@ -12,7 +12,7 @@ export default function LoginPage() {
     <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-8 sm:px-4">
         {/* Logo Container */}
-        <div className="mb flex justify-center">
+        <div className="flex justify-center">
           <Image
             src="/image1.png"
             alt="EduGestao"
@@ -42,7 +42,7 @@ export default function LoginPage() {
               >
                 Identificação
               </label>
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-600 bg-slate-700 px-4 py-4 transition-all focus-within:bg-slate-600 focus-within:border-blue-500">
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 transition-all focus-within:bg-slate-600 focus-within:border-blue-500">
                 <Mail className="h-5 w-5 text-slate-400" />
                 <input
                   id="email"
@@ -61,7 +61,7 @@ export default function LoginPage() {
               >
                 Senha
               </label>
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-600 bg-slate-700 px-4 py-4 transition-all focus-within:bg-slate-600 focus-within:border-blue-500">
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 transition-all focus-within:bg-slate-600 focus-within:border-blue-500">
                 <Lock className="h-5 w-5 text-slate-400" />
                 <input
                   id="password"
@@ -84,8 +84,8 @@ export default function LoginPage() {
               </div>
             </div>
             <Link
-              href="/"
-              className="flex h-16 w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 text-base font-bold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 active:scale-95"
+              href="/dashboard"
+              className="flex h-13 w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 text-base font-bold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 active:scale-95"
             >
               Acessar Sistema
               <ArrowRight className="h-5 w-5" />
