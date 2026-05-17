@@ -5,7 +5,12 @@ import { BookOpen, Plus, Search } from "lucide-react";
 import { toast } from "react-toastify";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
-import { DataTable, EmptyState, FormModal, PageTitle } from "../../../components/ui";
+import {
+  DataTable,
+  EmptyState,
+  FormModal,
+  PageTitle,
+} from "../../../components/ui";
 import type { DataTableColumn } from "../../../components/ui";
 import { useEscola, type Turma } from "@/contexts/EscolaContext";
 
@@ -13,15 +18,19 @@ const colunas: DataTableColumn<Turma>[] = [
   { key: "nome", header: "Turma", render: (t) => t.nome },
   { key: "turno", header: "Turno", render: (t) => t.turno },
   { key: "sala", header: "Sala", render: (t) => t.sala },
-  { key: "professorResponsavel", header: "Professor", render: (t) => t.professorResponsavel },
-  { 
-    key: "quantidadeAlunos", 
-    header: "Alunos", 
+  {
+    key: "professorResponsavel",
+    header: "Professor",
+    render: (t) => t.professorResponsavel,
+  },
+  {
+    key: "quantidadeAlunos",
+    header: "Alunos",
     render: (t) => (
       <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-lg font-medium">
         {t.quantidadeAlunos} alunos
       </span>
-    ) 
+    ),
   },
 ];
 
@@ -38,9 +47,10 @@ export default function TurmasClient() {
   });
 
   const turmasFiltradas = useMemo(() => {
-    return turmas.filter((t) =>
-      t.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      t.professorResponsavel.toLowerCase().includes(busca.toLowerCase())
+    return turmas.filter(
+      (t) =>
+        t.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        t.professorResponsavel.toLowerCase().includes(busca.toLowerCase()),
     );
   }, [busca, turmas]);
 
@@ -73,7 +83,6 @@ export default function TurmasClient() {
 
       <main className="px-4 py-6 md:ml-64 md:px-10">
         <div className="mx-auto max-w-6xl space-y-6">
-          
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <PageTitle
               title="Turmas"
@@ -101,10 +110,10 @@ export default function TurmasClient() {
 
           {turmasFiltradas.length > 0 ? (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <DataTable 
-                data={turmasFiltradas} 
-                columns={colunas} 
-                rowKey={(t) => t.id} 
+              <DataTable
+                data={turmasFiltradas}
+                columns={colunas}
+                rowKey={(t) => t.id}
               />
             </div>
           ) : (
@@ -125,7 +134,9 @@ export default function TurmasClient() {
       >
         <form onSubmit={salvarTurma} className="space-y-5">
           <div>
-            <label className="mb-1 block text-sm font-medium">Nome da Turma</label>
+            <label className="mb-1 block text-sm font-medium">
+              Nome da Turma
+            </label>
             <input
               value={formulario.nome}
               onChange={(event) => atualizarCampo("nome", event.target.value)}
@@ -139,7 +150,9 @@ export default function TurmasClient() {
               <label className="mb-1 block text-sm font-medium">Turno</label>
               <select
                 value={formulario.turno}
-                onChange={(event) => atualizarCampo("turno", event.target.value)}
+                onChange={(event) =>
+                  atualizarCampo("turno", event.target.value)
+                }
                 className="w-full rounded-xl border border-slate-200 bg-white p-3"
               >
                 <option value="Matutino">Matutino</option>
@@ -161,7 +174,9 @@ export default function TurmasClient() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium">Professor Responsavel</label>
+              <label className="mb-1 block text-sm font-medium">
+                Professor Responsável
+              </label>
               <input
                 value={formulario.professorResponsavel}
                 onChange={(event) =>
@@ -173,7 +188,9 @@ export default function TurmasClient() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Quantidade de Alunos</label>
+              <label className="mb-1 block text-sm font-medium">
+                Quantidade de Alunos
+              </label>
               <input
                 type="number"
                 min="1"

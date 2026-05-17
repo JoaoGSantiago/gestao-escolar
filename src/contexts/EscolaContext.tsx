@@ -2,7 +2,10 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 import { alunosMock, type Aluno as AlunoBase } from "../../mocks/alunos";
-import { professoresMock, type Professor as ProfessorBase } from "../../mocks/professores";
+import {
+  professoresMock,
+  type Professor as ProfessorBase,
+} from "../../mocks/professores";
 import { turmasMock } from "../../mocks/turmas";
 import { disciplinasMock } from "../../mocks/disciplinas";
 
@@ -102,14 +105,14 @@ export function EscolaProvider({ children }: { children: React.ReactNode }) {
       status: "Ativo",
       matricula: `20260${index + 1}`,
       dataNascimento: "2005-01-01",
-    }))
+    })),
   );
   const [professores, setProfessores] = useState<Professor[]>(
     professoresMock.map((professor) => ({
       ...professor,
       status: "Ativo",
       telefone: "(82) 99999-0000",
-    }))
+    })),
   );
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>(
     disciplinasMock.map((disciplina) => ({
@@ -117,12 +120,13 @@ export function EscolaProvider({ children }: { children: React.ReactNode }) {
       nome: disciplina.nome,
       cargaHoraria: disciplina.cargaHoraria,
       professorResponsavel:
-        professoresMock.find((professor) => professor.id === disciplina.professorId)?.nome ??
-        "A definir",
+        professoresMock.find(
+          (professor) => professor.id === disciplina.professorId,
+        )?.nome ?? "A definir",
       turma:
         turmasMock.find((turma) => turma.id === disciplina.turmaId)?.nome ??
-        "Nao informada",
-    }))
+        "Não informada",
+    })),
   );
   const [turmas, setTurmas] = useState<Turma[]>(
     turmasMock.map((turma, index) => ({
@@ -133,7 +137,7 @@ export function EscolaProvider({ children }: { children: React.ReactNode }) {
       professorResponsavel:
         professoresMock[index % professoresMock.length]?.nome ?? "A definir",
       quantidadeAlunos: turma.alunos,
-    }))
+    })),
   );
 
   const value = useMemo<EscolaContextValue>(
@@ -197,7 +201,7 @@ export function EscolaProvider({ children }: { children: React.ReactNode }) {
         ]);
       },
     }),
-    [alunos, disciplinas, professores, turmas]
+    [alunos, disciplinas, professores, turmas],
   );
 
   return (

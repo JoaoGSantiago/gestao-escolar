@@ -33,8 +33,8 @@ export default function AlunoDetalhesPage() {
             </Link>
 
             <EmptyState
-              title="Aluno nao encontrado"
-              description="Nao localizamos esse cadastro."
+              title="Aluno não encontrado"
+              description="Não localizamos esse cadastro."
               icon={<UserRound className="h-6 w-6" />}
             />
           </div>
@@ -45,17 +45,18 @@ export default function AlunoDetalhesPage() {
 
   const notasAluno = notasMock.filter((nota) => nota.alunoId === aluno.id);
   const frequenciasAluno = frequenciaMock.filter(
-    (frequencia) => frequencia.alunoId === aluno.id
+    (frequencia) => frequencia.alunoId === aluno.id,
   );
 
   const mediaNotas = notasAluno.length
-    ? notasAluno.reduce((total, nota) => total + nota.valor, 0) / notasAluno.length
+    ? notasAluno.reduce((total, nota) => total + nota.valor, 0) /
+      notasAluno.length
     : 0;
 
   const mediaFrequencia = frequenciasAluno.length
     ? frequenciasAluno.reduce(
         (total, frequencia) => total + frequencia.percentual,
-        0
+        0,
       ) / frequenciasAluno.length
     : 0;
 
@@ -77,7 +78,7 @@ export default function AlunoDetalhesPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <PageTitle
               title={aluno.nome}
-              subtitle="Detalhes basicos do aluno."
+              subtitle="Detalhes básicos do aluno."
             />
 
             <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -92,16 +93,20 @@ export default function AlunoDetalhesPage() {
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-500">Matricula</p>
+                <p className="text-sm font-semibold text-slate-500">
+                  Matrícula
+                </p>
                 <p className="mt-1 text-slate-800">
-                  {aluno.matricula ?? "Nao informada"}
+                  {aluno.matricula ?? "Não informada"}
                 </p>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-500">Data de Nascimento</p>
+                <p className="text-sm font-semibold text-slate-500">
+                  Data de Nascimento
+                </p>
                 <p className="mt-1 text-slate-800">
-                  {aluno.dataNascimento ?? "Nao informada"}
+                  {aluno.dataNascimento ?? "Não informada"}
                 </p>
               </div>
             </div>
@@ -109,14 +114,18 @@ export default function AlunoDetalhesPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500">Media das notas</p>
+              <p className="text-sm font-semibold text-slate-500">
+                Media das notas
+              </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {mediaNotas ? mediaNotas.toFixed(1) : "-"}
               </p>
             </div>
 
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500">Frequencia media</p>
+              <p className="text-sm font-semibold text-slate-500">
+                Frequência média
+              </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {mediaFrequencia ? `${mediaFrequencia.toFixed(1)}%` : "-"}
               </p>

@@ -15,8 +15,8 @@ import { Sidebar } from "../../components/Sidebar";
 export default function DashboardPage() {
   const resumoGeral = [
     {
-      label: "Total Alunos",
-      value: "142",
+      label: "Alunos",
+      value: "6",
       icon: Users,
       color: "text-blue-600",
       bg: "bg-blue-50",
@@ -24,7 +24,7 @@ export default function DashboardPage() {
     },
     {
       label: "Professores",
-      value: "18",
+      value: "5",
       icon: GraduationCap,
       color: "text-indigo-600",
       bg: "bg-indigo-50",
@@ -57,10 +57,11 @@ export default function DashboardPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-              Dashboard Academico
+              Dashboard Acadêmico
             </h1>
             <p className="text-sm font-medium text-slate-500">
-              Bem-vindo, Marcelo Henrique. Gerencie sua instituicao de forma agil.
+              Bem-vindo, Marcelo Henrique. Gerencie sua instituição de forma
+              ágil.
             </p>
           </div>
 
@@ -103,14 +104,14 @@ export default function DashboardPage() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-50">
                   <School className="h-8 w-8 text-slate-300" />
                 </div>
-                <p className="max-w-[250px] font-medium text-slate-400">
-                  Ainda nao ha atividades registradas para este periodo letivo.
+                <p className="max-w-60 font-medium text-slate-400">
+                  Ainda não há atividades registradas para este período letivo.
                 </p>
               </div>
             </div>
 
             <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="font-bold text-slate-800">Acoes Rapidas</h3>
+              <h3 className="font-bold text-slate-800">Ações Rápidas</h3>
               <div className="flex flex-col gap-2">
                 <Link
                   href="/alunos"
@@ -128,7 +129,7 @@ export default function DashboardPage() {
                   type="button"
                   className="cursor-not-allowed rounded-lg border border-slate-100 p-3 text-left text-sm font-bold text-slate-400 transition-all hover:bg-slate-50"
                 >
-                  Relatorio de Desempenho
+                  Relatório de Desempenho
                 </button>
               </div>
             </div>

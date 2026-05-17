@@ -17,10 +17,11 @@ type NotaTabela = Nota & {
 const dadosTabela: NotaTabela[] = notasMock.map((nota) => ({
   ...nota,
   alunoNome:
-    alunosMock.find((aluno) => aluno.id === nota.alunoId)?.nome ?? "Aluno nao encontrado",
+    alunosMock.find((aluno) => aluno.id === nota.alunoId)?.nome ??
+    "Aluno não encontrado",
   disciplinaNome:
-    disciplinasMock.find((disciplina) => disciplina.id === nota.disciplinaId)?.nome ??
-    "Disciplina nao encontrada",
+    disciplinasMock.find((disciplina) => disciplina.id === nota.disciplinaId)
+      ?.nome ?? "Disciplina não encontrada",
 }));
 
 const colunas: DataTableColumn<NotaTabela>[] = [
@@ -30,9 +31,9 @@ const colunas: DataTableColumn<NotaTabela>[] = [
     header: "Disciplina",
     render: (nota) => nota.disciplinaNome,
   },
-  { key: "avaliacao", header: "Avaliacao", render: (nota) => nota.avaliacao },
+  { key: "avaliacao", header: "Avaliação", render: (nota) => nota.avaliacao },
   { key: "valor", header: "Nota", render: (nota) => nota.valor.toFixed(1) },
-  { key: "periodo", header: "Periodo", render: (nota) => nota.periodo },
+  { key: "periodo", header: "Período", render: (nota) => nota.periodo },
 ];
 
 export default function NotasClient() {
@@ -45,7 +46,7 @@ export default function NotasClient() {
         <div className="mx-auto max-w-6xl space-y-6">
           <PageTitle
             title="Notas"
-            subtitle="Acompanhamento das avaliacoes registradas por aluno e disciplina."
+            subtitle="Acompanhamento das avaliações registradas por aluno e disciplina."
           />
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -54,14 +55,18 @@ export default function NotasClient() {
                 <BookOpen className="h-5 w-5" />
               </div>
               <p className="text-sm font-medium text-slate-500">Lancamentos</p>
-              <p className="text-2xl font-bold text-slate-900">{dadosTabela.length}</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {dadosTabela.length}
+              </p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                 <School className="h-5 w-5" />
               </div>
-              <p className="text-sm font-medium text-slate-500">Disciplinas avaliadas</p>
+              <p className="text-sm font-medium text-slate-500">
+                Disciplinas avaliadas
+              </p>
               <p className="text-2xl font-bold text-slate-900">
                 {new Set(dadosTabela.map((nota) => nota.disciplinaId)).size}
               </p>
@@ -71,7 +76,7 @@ export default function NotasClient() {
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
                 <GraduationCap className="h-5 w-5" />
               </div>
-              <p className="text-sm font-medium text-slate-500">Media geral</p>
+              <p className="text-sm font-medium text-slate-500">Média geral</p>
               <p className="text-2xl font-bold text-slate-900">
                 {(
                   dadosTabela.reduce((total, nota) => total + nota.valor, 0) /
