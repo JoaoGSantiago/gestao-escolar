@@ -6,6 +6,8 @@ import {
   GraduationCap,
   BookOpen,
   School,
+  Clock,
+  FileText,
 } from "lucide-react";
 
 const menuItems = [
@@ -14,6 +16,8 @@ const menuItems = [
   { name: "Professores", icon: GraduationCap, href: "/professores" },
   { name: "Turmas", icon: School, href: "/turmas" },
   { name: "Disciplinas", icon: BookOpen, href: "/disciplinas" },
+  { name: "Frequência", icon: Clock, href: "/frequencia" },
+  { name: "Notas", icon: FileText, href: "/notas" },
 ];
 
 export function Sidebar() {

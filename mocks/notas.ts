@@ -4,7 +4,7 @@ export interface Nota {
   disciplinaId: string;
   avaliacao: string;
   valor: number;
-  periodo: string;
+  bimestre: number;
 }
 
 export const notasMock: Nota[] = [
@@ -14,7 +14,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS002",
     avaliacao: "AV1",
     valor: 8.5,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA002",
@@ -22,7 +22,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS003",
     avaliacao: "AV1",
     valor: 7.8,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA003",
@@ -30,7 +30,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS002",
     avaliacao: "AV1",
     valor: 9.1,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA004",
@@ -38,7 +38,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS003",
     avaliacao: "AV1",
     valor: 6.9,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA005",
@@ -46,7 +46,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS002",
     avaliacao: "AV1",
     valor: 7.4,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA006",
@@ -54,7 +54,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS004",
     avaliacao: "AV1",
     valor: 8.9,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA007",
@@ -62,7 +62,7 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS005",
     avaliacao: "AV1",
     valor: 7.2,
-    periodo: "2026.1",
+    bimestre: 1,
   },
   {
     id: "NOTA008",
@@ -70,6 +70,6 @@ export const notasMock: Nota[] = [
     disciplinaId: "DIS001",
     avaliacao: "Projeto Final",
     valor: 9.4,
-    periodo: "2026.1",
+    bimestre: 1,
   },
 ];

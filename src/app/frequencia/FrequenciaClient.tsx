@@ -7,19 +7,13 @@ import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import { DataTable, PageTitle } from "../../../components/ui";
 import type { DataTableColumn } from "../../../components/ui";
-import { notasMock, type Nota } from "../../../mocks/notas";
+import { frequenciaMock, type Frequencia } from "../../../mocks/frequencia";
 import { alunosMock } from "../../../mocks/alunos";
 import { disciplinasMock } from "../../../mocks/disciplinas";
-import { frequenciaMock } from "../../../mocks/frequencia";
 import { useEscola } from "@/contexts/EscolaContext";
 
-type AlunoComNota = {
-  id: string;
-  notaId: string;
-  nome: string;
-  nota?: number;
-  alunoId: string;
-  disciplinaId: string;
+type AlunoComFrequencia = Frequencia & {
+  alunoNome: string;
 };
 
 type ModalState = {
@@ -28,8 +22,8 @@ type ModalState = {
   disciplinaNome: string;
 };
 
-export default function NotasClient() {
-  const { atualizarNota } = useEscola();
+export default function FrequenciaClient() {
+  const { atualizarFrequencia } = useEscola();
   const [modal, setModal] = useState<ModalState>({
     aberto: false,
     disciplinaId: "",
@@ -37,10 +31,10 @@ export default function NotasClient() {
   });
 
   const [editando, setEditando] = useState<string | null>(null);
-  const [notaTemp, setNotaTemp] = useState<Record<string, number>>({});
+  const [frequenciaTemp, setFrequenciaTemp] = useState<Record<string, number>>({});
 
-  // Buscar alunos e notas para o modal
-  const alunosComNota = useMemo(() => {
+  // Buscar alunos e frequência para o modal
+  const alunosComFrequencia = useMemo(() => {
     if (!modal.aberto || !modal.disciplinaId) return [];
 
     const disciplina = disciplinasMock.find((d) => d.id === modal.disciplinaId);
@@ -48,21 +42,12 @@ export default function NotasClient() {
 
     return frequenciaMock
       .filter((freq) => freq.disciplinaId === modal.disciplinaId)
-      .map((freq) => {
-        const nota = notasMock.find(
-          (n) => n.alunoId === freq.alunoId && n.disciplinaId === modal.disciplinaId
-        );
-        const aluno = alunosMock.find((a) => a.id === freq.alunoId);
-
-        return {
-          id: freq.alunoId,
-          notaId: nota?.id || `NOTA_${freq.alunoId}_${modal.disciplinaId}`,
-          nome: aluno?.nome || "Aluno não encontrado",
-          nota: nota?.valor || 0,
-          alunoId: freq.alunoId,
-          disciplinaId: modal.disciplinaId,
-        };
-      });
+      .map((freq) => ({
+        ...freq,
+        alunoNome:
+          alunosMock.find((aluno) => aluno.id === freq.alunoId)?.nome ??
+          "Aluno não encontrado",
+      }));
   }, [modal]);
 
   const abrirModal = (disciplinaId: string, disciplinaNome: string) => {
@@ -72,79 +57,107 @@ export default function NotasClient() {
   const fecharModal = () => {
     setModal({ aberto: false, disciplinaId: "", disciplinaNome: "" });
     setEditando(null);
-    setNotaTemp({});
+    setFrequenciaTemp({});
   };
 
-  const handleEditar = (alunoId: string) => {
-    setEditando(alunoId);
-    const aluno = alunosComNota.find((a) => a.id === alunoId);
-    if (aluno) {
-      setNotaTemp((prev) => ({
+  const handleEditar = (freqId: string) => {
+    setEditando(freqId);
+    const freq = alunosComFrequencia.find((f) => f.id === freqId);
+    if (freq) {
+      setFrequenciaTemp((prev) => ({
         ...prev,
-        [alunoId]: aluno.nota || 0,
+        [freqId]: freq.faltas || 0,
       }));
     }
   };
 
-  const handleSalvar = (alunoId: string) => {
-    const nota = notaTemp[alunoId];
+  const handleSalvar = (freqId: string) => {
+    const freq = alunosComFrequencia.find((f) => f.id === freqId);
+    if (!freq) return;
 
-    if (nota < 0 || nota > 10) {
-      toast.error("Nota deve estar entre 0 e 10");
+    const novasFaltas = frequenciaTemp[freqId];
+
+    if (novasFaltas < 0 || novasFaltas > freq.aulasPrevistas) {
+      toast.error(`Faltas deve estar entre 0 e ${freq.aulasPrevistas}`);
       return;
     }
 
-    atualizarNota({
-      alunoId,
-      disciplinaId: modal.disciplinaId,
-      avaliacao: "Avaliação",
-      valor: nota,
-      bimestre: 1,
+    const presencas = freq.aulasPrevistas - novasFaltas;
+
+    atualizarFrequencia({
+      alunoId: freq.alunoId,
+      disciplinaId: freq.disciplinaId,
+      presencas,
+      faltas: novasFaltas,
     });
 
-    toast.success("Nota atualizada com sucesso!");
+    toast.success("Frequência atualizada com sucesso!");
     setEditando(null);
   };
 
-  const colunas: DataTableColumn<AlunoComNota>[] = [
+  const colunas: DataTableColumn<AlunoComFrequencia>[] = [
     {
-      key: "nome",
+      key: "alunoNome",
       header: "Aluno",
-      render: (aluno) => aluno.nome,
+      render: (freq) => freq.alunoNome,
     },
     {
-      key: "nota",
-      header: "Nota",
-      render: (aluno) =>
-        editando === aluno.id ? (
+      key: "aulasPrevistas",
+      header: "Aulas",
+      render: (freq) => freq.aulasPrevistas,
+    },
+    {
+      key: "presencas",
+      header: "Presenças",
+      render: (freq) => freq.presencas,
+    },
+    {
+      key: "faltas",
+      header: "Faltas",
+      render: (freq) =>
+        editando === freq.id ? (
           <input
             type="number"
             min="0"
-            max="10"
-            step="0.1"
-            value={notaTemp[aluno.id] || 0}
+            max={freq.aulasPrevistas}
+            value={frequenciaTemp[freq.id] || 0}
             onChange={(e) =>
-              setNotaTemp((prev) => ({
+              setFrequenciaTemp((prev) => ({
                 ...prev,
-                [aluno.id]: Number(e.target.value),
+                [freq.id]: Number(e.target.value),
               }))
             }
             className="w-20 rounded border border-slate-300 px-2 py-1"
           />
         ) : (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
-            {aluno.nota?.toFixed(1)}
+          <span className="text-sm font-semibold text-slate-700">
+            {freq.faltas}
           </span>
         ),
     },
     {
+      key: "percentual",
+      header: "Frequência %",
+      render: (freq) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-bold ${
+            freq.percentual >= 75
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {freq.percentual.toFixed(1)}%
+        </span>
+      ),
+    },
+    {
       key: "acoes",
       header: "Ações",
-      render: (aluno) =>
-        editando === aluno.id ? (
+      render: (freq) =>
+        editando === freq.id ? (
           <div className="flex gap-2">
             <button
-              onClick={() => handleSalvar(aluno.id)}
+              onClick={() => handleSalvar(freq.id)}
               className="flex items-center gap-1 rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700"
             >
               <Check className="h-4 w-4" /> Salvar
@@ -158,10 +171,10 @@ export default function NotasClient() {
           </div>
         ) : (
           <button
-            onClick={() => handleEditar(aluno.id)}
+            onClick={() => handleEditar(freq.id)}
             className="flex items-center gap-1 rounded bg-indigo-600 px-3 py-1 text-xs font-semibold text-white hover:bg-indigo-700"
           >
-            Editar
+             Editar
           </button>
         ),
     },
@@ -175,8 +188,8 @@ export default function NotasClient() {
       <main className="px-4 py-6 md:ml-64 md:px-10">
         <div className="mx-auto max-w-6xl space-y-6">
           <PageTitle
-            title="Notas"
-            subtitle="Acompanhamento das avaliações registradas por disciplina."
+            title="Frequência"
+            subtitle="Acompanhamento da frequência dos alunos por disciplina."
           />
 
           <div className="space-y-4">
@@ -196,9 +209,9 @@ export default function NotasClient() {
                   </div>
                   <button
                     onClick={() => abrirModal(disciplina.id, disciplina.nome)}
-                    className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
                   >
-                    Notas
+                    Frequência
                   </button>
                 </div>
               </div>
@@ -220,18 +233,18 @@ export default function NotasClient() {
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
-              aria-labelledby="modal-notas-title"
+              aria-labelledby="modal-frequencia-title"
             >
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <h2
-                    id="modal-notas-title"
+                    id="modal-frequencia-title"
                     className="text-2xl font-bold text-slate-900"
                   >
-                    Notas - {modal.disciplinaNome}
+                    Frequência - {modal.disciplinaNome}
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    Gerencie as notas dos alunos
+                    Gerencie a frequência dos alunos
                   </p>
                 </div>
                 <button
@@ -244,16 +257,16 @@ export default function NotasClient() {
                 </button>
               </div>
 
-              {alunosComNota.length > 0 ? (
+              {alunosComFrequencia.length > 0 ? (
                 <DataTable
-                  data={alunosComNota}
+                  data={alunosComFrequencia}
                   columns={colunas}
-                  rowKey={(aluno) => aluno.id}
+                  rowKey={(freq) => freq.id}
                 />
               ) : (
                 <div className="text-center py-8">
                   <p className="text-slate-500">
-                    Nenhum registro de notas para esta disciplina.
+                    Nenhum registro de frequência para esta disciplina.
                   </p>
                 </div>
               )}

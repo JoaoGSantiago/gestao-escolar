@@ -8,20 +8,20 @@ export interface Turma {
 export const turmasMock: Turma[] = [
   {
     id: "TUR001",
-    nome: "3º Período",
+    nome: "6º Ano A",
     turno: "Matutino",
     alunos: 3,
   },
   {
     id: "TUR002",
-    nome: "5º Período",
+    nome: "7º Ano B",
     turno: "Vespertino",
     alunos: 2,
   },
   {
     id: "TUR003",
-    nome: "7º Período",
-    turno: "Noturno",
-    alunos: 1,
+    nome: "1º Médio C",
+    turno: "Matutino",
+    alunos: 3,
   },
 ];
