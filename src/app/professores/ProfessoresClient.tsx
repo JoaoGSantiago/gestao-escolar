@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { GraduationCap, Plus } from "lucide-react";
-import { toast } from "react-toastify";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import { DataTable, EmptyState, FormModal, PageTitle } from "../../../components/ui";
@@ -61,7 +60,6 @@ export default function ProfessoresClient() {
   function salvarProfessor(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     adicionarProfessor(formulario);
-    toast.success("Professor cadastrado com sucesso!");
     fecharModal();
   }
 

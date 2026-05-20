@@ -1,8 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import {
-  AlertCircle,
+  BarChart3,
   BookOpen,
   ChevronRight,
   GraduationCap,
@@ -11,12 +12,42 @@ import {
 } from "lucide-react";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
+import { useEscola } from "@/contexts/EscolaContext";
 
 export default function DashboardPage() {
+  const { alunos, professores, turmas, disciplinas, frequencias } = useEscola();
+
+  const painelDisciplinas = useMemo(() => {
+    return disciplinas.map((disciplina) => {
+      const alunosDaTurma = alunos.filter(
+        (aluno) => aluno.turma === disciplina.turma,
+      );
+      const frequenciasDaDisciplina = frequencias.filter(
+        (frequencia) => frequencia.disciplinaId === disciplina.id,
+      );
+      const frequenciaMedia =
+        frequenciasDaDisciplina.length > 0
+          ? frequenciasDaDisciplina.reduce(
+              (total, frequencia) => total + frequencia.percentual,
+              0,
+            ) / frequenciasDaDisciplina.length
+          : null;
+
+      return {
+        id: disciplina.id,
+        nome: disciplina.nome,
+        turma: disciplina.turma,
+        professorResponsavel: disciplina.professorResponsavel,
+        totalAlunos: alunosDaTurma.length,
+        frequenciaMedia,
+      };
+    });
+  }, [alunos, disciplinas, frequencias]);
+
   const resumoGeral = [
     {
       label: "Alunos",
-      value: "6",
+      value: alunos.length.toString(),
       icon: Users,
       color: "text-blue-600",
       bg: "bg-blue-50",
@@ -24,7 +55,7 @@ export default function DashboardPage() {
     },
     {
       label: "Professores",
-      value: "5",
+      value: professores.length.toString(),
       icon: GraduationCap,
       color: "text-indigo-600",
       bg: "bg-indigo-50",
@@ -32,7 +63,7 @@ export default function DashboardPage() {
     },
     {
       label: "Turmas Ativas",
-      value: "12",
+      value: turmas.length.toString(),
       icon: School,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -40,7 +71,7 @@ export default function DashboardPage() {
     },
     {
       label: "Disciplinas",
-      value: "24",
+      value: disciplinas.length.toString(),
       icon: BookOpen,
       color: "text-amber-600",
       bg: "bg-amber-50",
@@ -57,11 +88,10 @@ export default function DashboardPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-              Dashboard Acadêmico
+              Dashboard Academico
             </h1>
             <p className="text-sm font-medium text-slate-500">
-              Bem-vindo, Marcelo Henrique. Gerencie sua instituição de forma
-              ágil.
+              Acompanhe alunos, materias e presenca por disciplina.
             </p>
           </div>
 
@@ -80,59 +110,67 @@ export default function DashboardPage() {
                   </div>
                   <ChevronRight className="h-4 w-4 text-slate-300 transition-colors group-hover:text-blue-500" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-500">
-                    {item.label}
-                  </p>
-                  <h3 className="text-2xl font-black tracking-tight text-slate-900">
-                    {item.value}
-                  </h3>
-                </div>
+                <p className="text-sm font-semibold text-slate-500">
+                  {item.label}
+                </p>
+                <h3 className="text-2xl font-black tracking-tight text-slate-900">
+                  {item.value}
+                </h3>
               </Link>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-5">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div className="border-b border-slate-100 bg-slate-50/50 p-5">
                 <h3 className="flex items-center gap-2 font-bold text-slate-800">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  Atividades Recentes
+                  <BarChart3 className="h-4 w-4 text-blue-500" />
+                  Dashboard das Disciplinas
                 </h3>
               </div>
-              <div className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-50">
-                  <School className="h-8 w-8 text-slate-300" />
-                </div>
-                <p className="max-w-60 font-medium text-slate-400">
-                  Ainda não há atividades registradas para este período letivo.
-                </p>
-              </div>
-            </div>
 
-            <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="font-bold text-slate-800">Ações Rápidas</h3>
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/alunos"
-                  className="rounded-lg border border-slate-100 p-3 text-sm font-bold text-slate-600 transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  + Cadastrar Novo Aluno
-                </Link>
-                <Link
-                  href="/professores"
-                  className="rounded-lg border border-slate-100 p-3 text-sm font-bold text-slate-600 transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  + Vincular Professor
-                </Link>
-                <button
-                  type="button"
-                  className="cursor-not-allowed rounded-lg border border-slate-100 p-3 text-left text-sm font-bold text-slate-400 transition-all hover:bg-slate-50"
-                >
-                  Relatório de Desempenho
-                </button>
+              <div className="divide-y divide-slate-100">
+                {painelDisciplinas.map((disciplina) => (
+                  <div
+                    key={disciplina.id}
+                    className="grid gap-4 p-5 md:grid-cols-[1.4fr_0.7fr_0.8fr]"
+                  >
+                    <div>
+                      <p className="font-bold text-slate-900">
+                        {disciplina.nome}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {disciplina.turma} - {disciplina.professorResponsavel}
+                      </p>
+                    </div>
+
+                    <div className="rounded-lg bg-slate-50 p-3">
+                      <p className="text-xs font-semibold uppercase text-slate-400">
+                        Alunos na materia
+                      </p>
+                      <p className="mt-1 text-xl font-black text-slate-900">
+                        {disciplina.totalAlunos}
+                      </p>
+                    </div>
+
+                    <div className="rounded-lg bg-slate-50 p-3">
+                      <p className="text-xs font-semibold uppercase text-slate-400">
+                        Presenca
+                      </p>
+                      <p
+                        className={`mt-1 text-xl font-black ${
+                          (disciplina.frequenciaMedia ?? 0) >= 75
+                            ? "text-emerald-600"
+                            : "text-rose-600"
+                        }`}
+                      >
+                        {disciplina.frequenciaMedia === null
+                          ? "--"
+                          : `${disciplina.frequenciaMedia.toFixed(1)}%`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
           </div>
         </div>
       </main>

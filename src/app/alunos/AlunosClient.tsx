@@ -3,11 +3,9 @@
 import { useMemo, useState } from "react";
 import { Plus, Users, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import {
-  EmptyState,
   FormModal,
   PageTitle,
 } from "../../../components/ui";
@@ -74,7 +72,6 @@ export default function AlunosClient() {
   function salvarAluno(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     adicionarAluno(formulario);
-    toast.success("Aluno cadastrado com sucesso!");
     fecharModalCadastro();
   }
 

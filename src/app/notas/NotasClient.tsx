@@ -1,25 +1,24 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { BookOpen, Edit2, Check, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { useMemo, useState } from "react";
+import { BookOpen, CheckCircle2, ClipboardPlus, Plus, X } from "lucide-react";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
-import { DataTable, PageTitle } from "../../../components/ui";
+import { DataTable, EmptyState, PageTitle } from "../../../components/ui";
 import type { DataTableColumn } from "../../../components/ui";
-import { notasMock, type Nota } from "../../../mocks/notas";
-import { alunosMock } from "../../../mocks/alunos";
-import { disciplinasMock } from "../../../mocks/disciplinas";
-import { frequenciaMock } from "../../../mocks/frequencia";
 import { useEscola } from "@/contexts/EscolaContext";
 
-type AlunoComNota = {
+type AlunoComNotas = {
   id: string;
-  notaId: string;
   nome: string;
-  nota?: number;
-  alunoId: string;
-  disciplinaId: string;
+  turma: string;
+  notas: {
+    id: string;
+    avaliacao: string;
+    valor: number;
+    bimestre: number;
+  }[];
+  media: number | null;
 };
 
 type ModalState = {
@@ -28,142 +27,243 @@ type ModalState = {
   disciplinaNome: string;
 };
 
+type FormularioNota = {
+  alunoId: string;
+  avaliacao: string;
+  valor: string;
+};
+
+const avaliacoesPermitidas = ["AB1", "AB2", "AB3", "AB4"] as const;
+
+const formularioInicial: FormularioNota = {
+  alunoId: "",
+  avaliacao: "AB1",
+  valor: "",
+};
+
+function formatarMedia(media: number | null) {
+  return media === null ? "--" : media.toFixed(1);
+}
+
+function classeMedia(media: number | null) {
+  if (media === null) return "bg-slate-100 text-slate-500";
+  if (media >= 7) return "bg-emerald-100 text-emerald-700";
+  if (media >= 5) return "bg-amber-100 text-amber-700";
+  return "bg-rose-100 text-rose-700";
+}
+
 export default function NotasClient() {
-  const { atualizarNota } = useEscola();
+  const { alunos, disciplinas, frequencias, notas, atualizarNota } = useEscola();
   const [modal, setModal] = useState<ModalState>({
     aberto: false,
     disciplinaId: "",
     disciplinaNome: "",
   });
+  const [formularioAberto, setFormularioAberto] = useState(false);
+  const [formulario, setFormulario] =
+    useState<FormularioNota>(formularioInicial);
 
-  const [editando, setEditando] = useState<string | null>(null);
-  const [notaTemp, setNotaTemp] = useState<Record<string, number>>({});
+  const disciplinaAtual = useMemo(
+    () => disciplinas.find((disciplina) => disciplina.id === modal.disciplinaId),
+    [disciplinas, modal.disciplinaId],
+  );
 
-  // Buscar alunos e notas para o modal
-  const alunosComNota = useMemo(() => {
-    if (!modal.aberto || !modal.disciplinaId) return [];
+  const alunosComNotas = useMemo<AlunoComNotas[]>(() => {
+    if (!modal.aberto || !disciplinaAtual) return [];
 
-    const disciplina = disciplinasMock.find((d) => d.id === modal.disciplinaId);
-    if (!disciplina) return [];
+    const alunosDaFrequencia = new Set(
+      frequencias
+        .filter((frequencia) => frequencia.disciplinaId === modal.disciplinaId)
+        .map((frequencia) => frequencia.alunoId),
+    );
 
-    return frequenciaMock
-      .filter((freq) => freq.disciplinaId === modal.disciplinaId)
-      .map((freq) => {
-        const nota = notasMock.find(
-          (n) => n.alunoId === freq.alunoId && n.disciplinaId === modal.disciplinaId
-        );
-        const aluno = alunosMock.find((a) => a.id === freq.alunoId);
+    return alunos
+      .filter(
+        (aluno) =>
+          aluno.turma === disciplinaAtual.turma || alunosDaFrequencia.has(aluno.id),
+      )
+      .map((aluno) => {
+        const notasDoAluno = notas
+          .filter(
+            (nota) =>
+              nota.alunoId === aluno.id &&
+              nota.disciplinaId === modal.disciplinaId &&
+              avaliacoesPermitidas.includes(
+                nota.avaliacao as (typeof avaliacoesPermitidas)[number],
+              ),
+          )
+          .sort(
+            (a, b) =>
+              avaliacoesPermitidas.indexOf(
+                a.avaliacao as (typeof avaliacoesPermitidas)[number],
+              ) -
+              avaliacoesPermitidas.indexOf(
+                b.avaliacao as (typeof avaliacoesPermitidas)[number],
+              ),
+          );
+
+        const media =
+          notasDoAluno.length > 0
+            ? notasDoAluno.reduce((total, nota) => total + nota.valor, 0) /
+              notasDoAluno.length
+            : null;
 
         return {
-          id: freq.alunoId,
-          notaId: nota?.id || `NOTA_${freq.alunoId}_${modal.disciplinaId}`,
-          nome: aluno?.nome || "Aluno não encontrado",
-          nota: nota?.valor || 0,
-          alunoId: freq.alunoId,
-          disciplinaId: modal.disciplinaId,
+          id: aluno.id,
+          nome: aluno.nome,
+          turma: aluno.turma,
+          notas: notasDoAluno,
+          media,
         };
       });
-  }, [modal]);
+  }, [alunos, disciplinaAtual, frequencias, modal, notas]);
 
-  const abrirModal = (disciplinaId: string, disciplinaNome: string) => {
+  const resumoDisciplinas = useMemo(() => {
+    return disciplinas.map((disciplina) => {
+      const notasDaDisciplina = notas.filter(
+        (nota) =>
+          nota.disciplinaId === disciplina.id &&
+          avaliacoesPermitidas.includes(
+            nota.avaliacao as (typeof avaliacoesPermitidas)[number],
+          ),
+      );
+      const media =
+        notasDaDisciplina.length > 0
+          ? notasDaDisciplina.reduce((total, nota) => total + nota.valor, 0) /
+            notasDaDisciplina.length
+          : null;
+
+      return {
+        ...disciplina,
+        totalNotas: notasDaDisciplina.length,
+        media,
+      };
+    });
+  }, [disciplinas, notas]);
+
+  function abrirModal(disciplinaId: string, disciplinaNome: string) {
     setModal({ aberto: true, disciplinaId, disciplinaNome });
-  };
+  }
 
-  const fecharModal = () => {
+  function fecharModal() {
     setModal({ aberto: false, disciplinaId: "", disciplinaNome: "" });
-    setEditando(null);
-    setNotaTemp({});
-  };
+    setFormularioAberto(false);
+    setFormulario(formularioInicial);
+  }
 
-  const handleEditar = (alunoId: string) => {
-    setEditando(alunoId);
-    const aluno = alunosComNota.find((a) => a.id === alunoId);
-    if (aluno) {
-      setNotaTemp((prev) => ({
-        ...prev,
-        [alunoId]: aluno.nota || 0,
-      }));
+  function abrirFormularioNota(alunoId = "") {
+    setFormulario({
+      alunoId,
+      avaliacao: "AB1",
+      valor: "",
+    });
+    setFormularioAberto(true);
+  }
+
+  function atualizarCampo(campo: keyof FormularioNota, valor: string) {
+    setFormulario((estadoAtual) => ({ ...estadoAtual, [campo]: valor }));
+  }
+
+  function salvarNota(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const valor = Number(formulario.valor);
+
+    if (!formulario.alunoId) {
+      return;
     }
-  };
 
-  const handleSalvar = (alunoId: string) => {
-    const nota = notaTemp[alunoId];
+    if (
+      !avaliacoesPermitidas.includes(
+        formulario.avaliacao as (typeof avaliacoesPermitidas)[number],
+      )
+    ) {
+      return;
+    }
 
-    if (nota < 0 || nota > 10) {
-      toast.error("Nota deve estar entre 0 e 10");
+    if (Number.isNaN(valor) || valor < 0 || valor > 10) {
       return;
     }
 
     atualizarNota({
-      alunoId,
+      alunoId: formulario.alunoId,
       disciplinaId: modal.disciplinaId,
-      avaliacao: "Avaliação",
-      valor: nota,
+      avaliacao: formulario.avaliacao,
+      valor,
       bimestre: 1,
     });
 
-    toast.success("Nota atualizada com sucesso!");
-    setEditando(null);
-  };
+    setFormularioAberto(false);
+    setFormulario(formularioInicial);
+  }
 
-  const colunas: DataTableColumn<AlunoComNota>[] = [
+  const colunas: DataTableColumn<AlunoComNotas>[] = [
     {
-      key: "nome",
+      key: "aluno",
       header: "Aluno",
-      render: (aluno) => aluno.nome,
+      render: (aluno) => (
+        <div>
+          <p className="font-semibold text-slate-900">{aluno.nome}</p>
+          <p className="text-xs text-slate-400">{aluno.turma}</p>
+        </div>
+      ),
     },
     {
-      key: "nota",
-      header: "Nota",
+      key: "notas",
+      header: "Notas",
       render: (aluno) =>
-        editando === aluno.id ? (
-          <input
-            type="number"
-            min="0"
-            max="10"
-            step="0.1"
-            value={notaTemp[aluno.id] || 0}
-            onChange={(e) =>
-              setNotaTemp((prev) => ({
-                ...prev,
-                [aluno.id]: Number(e.target.value),
-              }))
-            }
-            className="w-20 rounded border border-slate-300 px-2 py-1"
-          />
-        ) : (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
-            {aluno.nota?.toFixed(1)}
-          </span>
+        (
+          <div className="flex max-w-xl flex-wrap gap-2">
+            {avaliacoesPermitidas.map((avaliacao) => {
+              const nota = aluno.notas.find(
+                (item) => item.avaliacao === avaliacao,
+              );
+
+              return (
+              <span
+                key={avaliacao}
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
+                  nota
+                    ? "bg-slate-100 text-slate-700"
+                    : "bg-slate-50 text-slate-400"
+                }`}
+              >
+                {avaliacao}
+                <strong className="text-slate-950">
+                  {nota ? nota.valor.toFixed(1) : "--"}
+                </strong>
+              </span>
+              );
+            })}
+          </div>
         ),
+    },
+    {
+      key: "media",
+      header: "Media",
+      render: (aluno) => (
+        <span
+          className={`inline-flex min-w-14 justify-center rounded-full px-3 py-1 text-xs font-bold ${classeMedia(
+            aluno.media,
+          )}`}
+        >
+          {formatarMedia(aluno.media)}
+        </span>
+      ),
     },
     {
       key: "acoes",
-      header: "Ações",
-      render: (aluno) =>
-        editando === aluno.id ? (
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleSalvar(aluno.id)}
-              className="flex items-center gap-1 rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700"
-            >
-              <Check className="h-4 w-4" /> Salvar
-            </button>
-            <button
-              onClick={() => setEditando(null)}
-              className="rounded bg-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-400"
-            >
-              Cancelar
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => handleEditar(aluno.id)}
-            className="flex items-center gap-1 rounded bg-indigo-600 px-3 py-1 text-xs font-semibold text-white hover:bg-indigo-700"
-          >
-            Editar
-          </button>
-        ),
+      header: "Acoes",
+      render: (aluno) => (
+        <button
+          type="button"
+          onClick={() => abrirFormularioNota(aluno.id)}
+          className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+        >
+          <Plus className="h-4 w-4" />
+          Adicionar nota
+        </button>
+      ),
     },
   ];
 
@@ -176,38 +276,56 @@ export default function NotasClient() {
         <div className="mx-auto max-w-6xl space-y-6">
           <PageTitle
             title="Notas"
-            subtitle="Acompanhamento das avaliações registradas por disciplina."
+            subtitle="Registro das avaliacoes e medias dos alunos por disciplina."
           />
 
-          <div className="space-y-4">
-            {disciplinasMock.map((disciplina) => (
-              <div
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {resumoDisciplinas.map((disciplina) => (
+              <article
                 key={disciplina.id}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/70"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-3 inline-flex rounded-xl bg-indigo-50 p-2 text-indigo-600">
+                      <BookOpen className="h-5 w-5" />
+                    </div>
+                    <h3 className="truncate text-lg font-bold text-slate-950">
                       {disciplina.nome}
                     </h3>
-                    <p className="text-sm text-slate-500">
-                      Carga horária: {disciplina.cargaHoraria}h
+                    <p className="mt-1 text-sm text-slate-500">
+                      {disciplina.turma} • {disciplina.cargaHoraria}h
                     </p>
                   </div>
-                  <button
-                    onClick={() => abrirModal(disciplina.id, disciplina.nome)}
-                    className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-bold ${classeMedia(
+                      disciplina.media,
+                    )}`}
                   >
-                    Notas
+                    Media {formatarMedia(disciplina.media)}
+                  </span>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    {disciplina.totalNotas} notas lancadas
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => abrirModal(disciplina.id, disciplina.nome)}
+                    className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  >
+                    Ver notas
                   </button>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </main>
 
-      {/* Modal */}
       {modal.aberto && (
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/40 backdrop-blur-sm"
@@ -216,13 +334,13 @@ export default function NotasClient() {
         >
           <div className="flex min-h-screen items-center justify-center p-4">
             <div
-              className="w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl"
+              className="max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-notas-title"
             >
-              <div className="mb-6 flex items-start justify-between gap-4">
+              <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                   <h2
                     id="modal-notas-title"
@@ -231,31 +349,126 @@ export default function NotasClient() {
                     Notas - {modal.disciplinaNome}
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    Gerencie as notas dos alunos
+                    Consulte as notas dos alunos e lance novas avaliacoes.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={fecharModal}
-                  className="rounded-2xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
-                  aria-label="Fechar modal"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => abrirFormularioNota()}
+                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                  >
+                    <ClipboardPlus className="h-5 w-5" />
+                    Adicionar nota
+                  </button>
+                  <button
+                    type="button"
+                    onClick={fecharModal}
+                    className="rounded-2xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                    aria-label="Fechar modal"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
-              {alunosComNota.length > 0 ? (
+              {formularioAberto ? (
+                <form
+                  onSubmit={salvarNota}
+                  className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4"
+                >
+                  <div className="grid gap-4 md:grid-cols-[1.4fr_1fr_0.7fr_auto] md:items-end">
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-slate-700">
+                        Aluno
+                      </label>
+                      <select
+                        value={formulario.alunoId}
+                        onChange={(event) =>
+                          atualizarCampo("alunoId", event.target.value)
+                        }
+                        className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        required
+                      >
+                        <option value="">Selecione</option>
+                        {alunosComNotas.map((aluno) => (
+                          <option key={aluno.id} value={aluno.id}>
+                            {aluno.nome}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-slate-700">
+                        Avaliacao
+                      </label>
+                      <select
+                        value={formulario.avaliacao}
+                        onChange={(event) =>
+                          atualizarCampo("avaliacao", event.target.value)
+                        }
+                        className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        required
+                      >
+                        {avaliacoesPermitidas.map((avaliacao) => (
+                          <option key={avaliacao} value={avaliacao}>
+                            {avaliacao}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-slate-700">
+                        Nota
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        value={formulario.valor}
+                        onChange={(event) =>
+                          atualizarCampo("valor", event.target.value)
+                        }
+                        className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        className="rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                      >
+                        Salvar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormularioAberto(false)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              ) : null}
+
+              {alunosComNotas.length > 0 ? (
                 <DataTable
-                  data={alunosComNota}
+                  data={alunosComNotas}
                   columns={colunas}
                   rowKey={(aluno) => aluno.id}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-slate-500">
-                    Nenhum registro de notas para esta disciplina.
-                  </p>
-                </div>
+                <EmptyState
+                  title="Nenhum aluno encontrado"
+                  description="Esta disciplina ainda nao tem alunos vinculados para lancar notas."
+                  icon={<BookOpen className="h-6 w-6" />}
+                />
               )}
             </div>
           </div>

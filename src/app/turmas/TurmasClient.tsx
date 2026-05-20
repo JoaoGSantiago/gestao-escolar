@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { BookOpen, Plus, Search } from "lucide-react";
-import { toast } from "react-toastify";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import {
@@ -72,7 +71,6 @@ export default function TurmasClient() {
   function salvarTurma(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     adicionarTurma(formulario);
-    toast.success("Turma cadastrada com sucesso!");
     fecharModal();
   }
 

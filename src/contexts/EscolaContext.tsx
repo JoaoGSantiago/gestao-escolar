@@ -252,6 +252,7 @@ export function EscolaProvider({ children }: { children: React.ReactNode }) {
             (n) =>
               n.alunoId === nota.alunoId &&
               n.disciplinaId === nota.disciplinaId &&
+              n.avaliacao.toLowerCase() === nota.avaliacao.toLowerCase() &&
               n.bimestre === nota.bimestre
           );
           if (index !== -1) {

@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Book, Clock, Plus, Search, User } from "lucide-react";
-import { toast } from "react-toastify";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import { EmptyState, FormModal, PageTitle } from "../../../components/ui";
@@ -42,7 +41,6 @@ export default function DisciplinasClient() {
   function salvarDisciplina(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     adicionarDisciplina(formulario);
-    toast.success("Disciplina cadastrada com sucesso!");
     fecharModal();
   }
 

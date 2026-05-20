@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Edit2, Check, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { Check, X } from "lucide-react";
 import { Header } from "../../../components/Header";
 import { Sidebar } from "../../../components/Sidebar";
 import { DataTable, PageTitle } from "../../../components/ui";
@@ -78,7 +77,6 @@ export default function FrequenciaClient() {
     const novasFaltas = frequenciaTemp[freqId];
 
     if (novasFaltas < 0 || novasFaltas > freq.aulasPrevistas) {
-      toast.error(`Faltas deve estar entre 0 e ${freq.aulasPrevistas}`);
       return;
     }
 
@@ -91,7 +89,6 @@ export default function FrequenciaClient() {
       faltas: novasFaltas,
     });
 
-    toast.success("Frequência atualizada com sucesso!");
     setEditando(null);
   };
 
