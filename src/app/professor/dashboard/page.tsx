@@ -70,7 +70,7 @@ export default function ProfessorDashboard() {
   if (!professorInfo) {
     return (
       <div className="rounded-2xl bg-red-50 p-6">
-        <p className="text-red-900">Professor nao encontrado.</p>
+        <p className="text-red-900">Professor não encontrado.</p>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function ProfessorDashboard() {
       bg: "bg-indigo-50",
     },
     {
-      label: "Presenca Media",
+      label: "Presença Média",
       value:
         professorInfo.frequenciaMedia === null
           ? "--"
@@ -117,24 +117,26 @@ export default function ProfessorDashboard() {
         </h1>
         <p className="text-sm font-medium text-slate-500">
           Bem-vindo, {professorInfo.professor.nome}. Gerencie sua turma e
-          registre frequencias e notas.
+          registre frequências e notas.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         {resumoGeral.map((item) => (
           <div
             key={item.label}
-            className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-300 hover:shadow-md"
+            className="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-blue-300 hover:shadow-md sm:p-5"
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between sm:mb-4">
               <div className={`rounded-lg p-2 ${item.bg}`}>
                 <item.icon className={`h-5 w-5 ${item.color}`} />
               </div>
               <ChevronRight className="h-4 w-4 text-slate-300 transition-colors group-hover:text-blue-500" />
             </div>
-            <p className="text-sm font-semibold text-slate-500">{item.label}</p>
-            <h3 className="text-2xl font-black tracking-tight text-slate-900">
+            <p className="text-sm font-semibold leading-tight text-slate-500">
+              {item.label}
+            </p>
+            <h3 className="text-2xl font-black leading-tight tracking-tight text-slate-900">
               {item.value}
             </h3>
           </div>
@@ -146,28 +148,28 @@ export default function ProfessorDashboard() {
           <div className="flex flex-col gap-2 border-b border-slate-100 bg-slate-50/50 p-5 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="flex items-center gap-2 font-bold text-slate-800">
               <BarChart3 className="h-4 w-4 text-blue-500" />
-              Dashboard da Materia
+              Dashboard da Matéria
             </h3>
             <span className="w-fit rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
               {professorInfo.disciplina?.nome} - {professorInfo.turma?.nome}
             </span>
           </div>
 
-          <div className="grid gap-4 p-5 sm:grid-cols-3">
-            <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
+          <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-3 sm:gap-4 sm:p-5">
+            <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 sm:p-4">
               <p className="text-xs font-semibold uppercase text-slate-400">
-                Alunos na materia
+                Alunos na matéria
               </p>
-              <p className="mt-1 text-2xl font-black text-slate-900">
+              <p className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">
                 {professorInfo.totalAlunos}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
+            <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 sm:p-4">
               <p className="text-xs font-semibold uppercase text-slate-400">
-                Presenca media
+                Presença média
               </p>
               <p
-                className={`mt-1 text-2xl font-black ${
+                className={`mt-1 text-xl font-black sm:text-2xl ${
                   (professorInfo.frequenciaMedia ?? 0) >= 75
                     ? "text-emerald-600"
                     : "text-rose-600"
@@ -178,11 +180,11 @@ export default function ProfessorDashboard() {
                   : `${professorInfo.frequenciaMedia.toFixed(1)}%`}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
+            <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 sm:p-4">
               <p className="text-xs font-semibold uppercase text-slate-400">
-                Faltas lancadas
+                Faltas lançadas
               </p>
-              <p className="mt-1 text-2xl font-black text-slate-900">
+              <p className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">
                 {professorInfo.totalFaltas}
               </p>
             </div>
@@ -192,11 +194,11 @@ export default function ProfessorDashboard() {
             {professorInfo.alunosComFrequencia.map((aluno) => (
               <div
                 key={aluno.id}
-                className="grid gap-3 p-4 md:grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr]"
+                className="grid gap-2 p-4 sm:grid-cols-2 md:grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr] md:gap-3"
               >
                 <p className="font-semibold text-slate-900">{aluno.nome}</p>
                 <p className="text-sm text-slate-600">
-                  Presencas: <strong>{aluno.presencas}</strong>
+                  Presenças: <strong>{aluno.presencas}</strong>
                 </p>
                 <p className="text-sm text-slate-600">
                   Faltas: <strong>{aluno.faltas}</strong>
@@ -218,7 +220,7 @@ export default function ProfessorDashboard() {
         </div>
 
         <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="font-bold text-slate-800">Informacoes</h3>
+          <h3 className="font-bold text-slate-800">Informações</h3>
           <div className="space-y-4 text-sm">
             <div>
               <p className="text-xs font-semibold uppercase text-slate-500">

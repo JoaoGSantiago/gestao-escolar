@@ -240,7 +240,7 @@ export default function NotasClient() {
     },
     {
       key: "media",
-      header: "Media",
+      header: "Média",
       render: (aluno) => (
         <span
           className={`inline-flex min-w-14 justify-center rounded-full px-3 py-1 text-xs font-bold ${classeMedia(
@@ -276,7 +276,7 @@ export default function NotasClient() {
         <div className="mx-auto max-w-6xl space-y-6">
           <PageTitle
             title="Notas"
-            subtitle="Registro das avaliacoes e medias dos alunos por disciplina."
+            subtitle="Registro das avaliações e médias dos alunos por disciplina."
           />
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -303,14 +303,14 @@ export default function NotasClient() {
                       disciplina.media,
                     )}`}
                   >
-                    Media {formatarMedia(disciplina.media)}
+                    Média {formatarMedia(disciplina.media)}
                   </span>
                 </div>
 
                 <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    {disciplina.totalNotas} notas lancadas
+                    {disciplina.totalNotas} notas lançadas
                   </div>
                   <button
                     type="button"
@@ -349,7 +349,7 @@ export default function NotasClient() {
                     Notas - {modal.disciplinaNome}
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    Consulte as notas dos alunos e lance novas avaliacoes.
+                    Consulte as notas dos alunos e lance novas avaliações.
                   </p>
                 </div>
 
@@ -466,7 +466,7 @@ export default function NotasClient() {
               ) : (
                 <EmptyState
                   title="Nenhum aluno encontrado"
-                  description="Esta disciplina ainda nao tem alunos vinculados para lancar notas."
+                  description="Esta disciplina ainda não tem alunos vinculados para lançar notas."
                   icon={<BookOpen className="h-6 w-6" />}
                 />
               )}

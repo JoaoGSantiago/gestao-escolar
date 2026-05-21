@@ -37,4 +37,24 @@ export const notasMock: Nota[] = [
   { id: "NOTA018", alunoId: "ALU003", disciplinaId: "DIS002", avaliacao: "AB2", valor: 7.6, bimestre: 1 },
   { id: "NOTA019", alunoId: "ALU003", disciplinaId: "DIS002", avaliacao: "AB3", valor: 7.2, bimestre: 1 },
   { id: "NOTA020", alunoId: "ALU003", disciplinaId: "DIS002", avaliacao: "AB4", valor: 7.5, bimestre: 1 },
+  // Turma do professor Edvonaldo - DIS001 (Matemática)
+  { id: "NOTA021", alunoId: "ALU006", disciplinaId: "DIS001", avaliacao: "AB1", valor: 9.2, bimestre: 1 },
+  { id: "NOTA022", alunoId: "ALU006", disciplinaId: "DIS001", avaliacao: "AB2", valor: 8.7, bimestre: 1 },
+  { id: "NOTA023", alunoId: "ALU006", disciplinaId: "DIS001", avaliacao: "AB3", valor: 9.0, bimestre: 1 },
+  { id: "NOTA024", alunoId: "ALU006", disciplinaId: "DIS001", avaliacao: "AB4", valor: 8.8, bimestre: 1 },
+
+  { id: "NOTA025", alunoId: "ALU007", disciplinaId: "DIS001", avaliacao: "AB1", valor: 7.6, bimestre: 1 },
+  { id: "NOTA026", alunoId: "ALU007", disciplinaId: "DIS001", avaliacao: "AB2", valor: 8.1, bimestre: 1 },
+  { id: "NOTA027", alunoId: "ALU007", disciplinaId: "DIS001", avaliacao: "AB3", valor: 7.9, bimestre: 1 },
+  { id: "NOTA028", alunoId: "ALU007", disciplinaId: "DIS001", avaliacao: "AB4", valor: 8.0, bimestre: 1 },
+
+  { id: "NOTA029", alunoId: "ALU008", disciplinaId: "DIS001", avaliacao: "AB1", valor: 8.4, bimestre: 1 },
+  { id: "NOTA030", alunoId: "ALU008", disciplinaId: "DIS001", avaliacao: "AB2", valor: 8.9, bimestre: 1 },
+  { id: "NOTA031", alunoId: "ALU008", disciplinaId: "DIS001", avaliacao: "AB3", valor: 8.6, bimestre: 1 },
+  { id: "NOTA032", alunoId: "ALU008", disciplinaId: "DIS001", avaliacao: "AB4", valor: 9.1, bimestre: 1 },
+
+  { id: "NOTA033", alunoId: "ALU009", disciplinaId: "DIS001", avaliacao: "AB1", valor: 6.8, bimestre: 1 },
+  { id: "NOTA034", alunoId: "ALU009", disciplinaId: "DIS001", avaliacao: "AB2", valor: 7.2, bimestre: 1 },
+  { id: "NOTA035", alunoId: "ALU009", disciplinaId: "DIS001", avaliacao: "AB3", valor: 7.0, bimestre: 1 },
+  { id: "NOTA036", alunoId: "ALU009", disciplinaId: "DIS001", avaliacao: "AB4", valor: 7.4, bimestre: 1 },
 ];

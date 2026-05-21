@@ -115,7 +115,7 @@ export default function AlunoDetalhesPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-semibold text-slate-500">
-                Media das notas
+                Média das notas
               </p>
               <p className="mt-2 text-3xl font-bold text-slate-900">
                 {mediaNotas ? mediaNotas.toFixed(1) : "-"}

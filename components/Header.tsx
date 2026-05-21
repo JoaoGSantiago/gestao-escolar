@@ -11,9 +11,11 @@ import {
   GraduationCap,
   BookOpen,
   School,
+  Clock,
+  FileText,
 } from "lucide-react";
 
-const menuItems = [
+const coordenacaoMenuItems = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   { name: "Alunos", icon: Users, href: "/alunos" },
   { name: "Professores", icon: GraduationCap, href: "/professores" },
@@ -21,8 +23,28 @@ const menuItems = [
   { name: "Disciplinas", icon: BookOpen, href: "/disciplinas" },
 ];
 
-export function Header() {
+const professorMenuItems = [
+  { name: "Dashboard", icon: LayoutDashboard, href: "/professor/dashboard" },
+  { name: "Meus Alunos", icon: Users, href: "/professor/alunos" },
+  { name: "Frequência", icon: Clock, href: "/professor/frequencia" },
+  { name: "Notas", icon: FileText, href: "/professor/notas" },
+];
+
+type HeaderProps = {
+  area?: "coordenacao" | "professor";
+};
+
+export function Header({ area = "coordenacao" }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isProfessor = area === "professor";
+  const menuItems = isProfessor ? professorMenuItems : coordenacaoMenuItems;
+  const homeHref = isProfessor ? "/professor/dashboard" : "/dashboard";
+  const profileTitle = isProfessor ? "Professor" : "Administrador";
+  const profileSubtitle = isProfessor ? "Painel Docente" : "Gestor Escolar";
+  const profileInitials = isProfessor ? "PR" : "AD";
+  const accentClass = isProfessor
+    ? "bg-emerald-500 hover:bg-emerald-600"
+    : "bg-blue-500 hover:bg-blue-600";
 
   return (
     <header className="relative h-20 border-b border-slate-800 bg-slate-900 flex items-center justify-start px-4 md:px-6 sticky top-0 z-20 w-full">
@@ -40,7 +62,7 @@ export function Header() {
           )}
         </button>
 
-        <Link href="/dashboard" className="flex items-center">
+        <Link href={homeHref} className="flex items-center">
           <Image
             src="/image1.png"
             alt="Edu Gestão"
@@ -59,11 +81,15 @@ export function Header() {
 
       <div className="flex items-center gap-4">
         <div className="text-right hidden sm:block">
-          <p className="text-sm font-bold text-slate-100">Administrador</p>
-          <p className="text-xs text-slate-400 font-medium">Gestor Escolar</p>
+          <p className="text-sm font-bold text-slate-100">{profileTitle}</p>
+          <p className="text-xs text-slate-400 font-medium">
+            {profileSubtitle}
+          </p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-md hover:bg-blue-600 transition-colors cursor-pointer">
-          AD
+        <div
+          className={`w-10 h-10 rounded-full ${accentClass} flex items-center justify-center font-bold text-white shadow-md transition-colors cursor-pointer`}
+        >
+          {profileInitials}
         </div>
       </div>
 

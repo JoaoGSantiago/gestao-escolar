@@ -11,7 +11,7 @@ export default function ProfessorLayout({
   return (
     <div className="min-h-screen bg-slate-100">
       <ProfessorSidebar />
-      <Header />
+      <Header area="professor" />
       <main className="px-4 py-6 md:ml-64 md:px-10">
         <div className="mx-auto max-w-6xl">{children}</div>
       </main>

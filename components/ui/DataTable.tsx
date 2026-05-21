@@ -23,7 +23,7 @@ export function DataTable<T>({
   emptyDescription = "Ajuste os filtros ou cadastre novos itens para preencher esta listagem.",
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60 sm:rounded-3xl">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50/80">
@@ -31,7 +31,7 @@ export function DataTable<T>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.14em] text-slate-400"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 sm:px-6 sm:py-4 sm:tracking-[0.14em]"
                 >
                   {column.header}
                 </th>
@@ -48,7 +48,7 @@ export function DataTable<T>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-6 py-4 align-middle text-sm text-slate-600"
+                      className="px-4 py-3 align-middle text-sm text-slate-600 sm:px-6 sm:py-4"
                     >
                       {column.render(row)}
                     </td>

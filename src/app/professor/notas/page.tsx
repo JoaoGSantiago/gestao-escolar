@@ -117,7 +117,7 @@ export default function ProfessorNotas() {
   if (!professorInfo) {
     return (
       <div className="rounded-2xl bg-red-50 p-6">
-        <p className="text-red-900">Professor nao encontrado.</p>
+        <p className="text-red-900">Professor não encontrado.</p>
       </div>
     );
   }
@@ -203,13 +203,13 @@ export default function ProfessorNotas() {
           </strong>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold text-slate-500">Notas lancadas</p>
+          <p className="text-sm font-semibold text-slate-500">Notas lançadas</p>
           <strong className="mt-2 block text-3xl text-slate-950">
             {professorInfo.totalNotas}
           </strong>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold text-slate-500">Media da turma</p>
+          <p className="text-sm font-semibold text-slate-500">Média da turma</p>
           <strong
             className={`mt-2 inline-flex rounded-full px-4 py-2 text-xl ${classeMedia(
               professorInfo.mediaTurma,
@@ -229,7 +229,7 @@ export default function ProfessorNotas() {
             <div>
               <h2 className="font-bold text-slate-900">Nova nota</h2>
               <p className="text-sm text-slate-500">
-                Lance uma avaliacao para qualquer aluno da turma.
+                Lance uma avaliação para qualquer aluno da turma.
               </p>
             </div>
             <button
@@ -327,10 +327,10 @@ export default function ProfessorNotas() {
                   Notas
                 </th>
                 <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Media
+                  Média
                 </th>
                 <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Acao
+                  Ação
                 </th>
               </tr>
             </thead>

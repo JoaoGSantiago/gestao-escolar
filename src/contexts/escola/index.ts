@@ -1,4 +1,5 @@
-export { EscolaProvider, useEscola } from "./escola";
+export { EscolaProvider } from "./EscolaProvider";
+export { useEscola } from "./useEscola";
 export type {
   Aluno,
   AtualizarFrequenciaInput,
@@ -11,4 +12,4 @@ export type {
   NovoProfessorInput,
   Professor,
   Turma,
-} from "./escola";
+} from "./types";
