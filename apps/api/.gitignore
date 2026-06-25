@@ -1,0 +1,17 @@
+/node_modules
+/dist
+/coverage
+
+# Prisma / SQLite
+*.db
+*.db-journal
+prisma/dev.db
+prisma/migrations/
+
+# Env
+.env
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*

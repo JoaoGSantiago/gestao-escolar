@@ -1,28 +1,20 @@
 {
   "name": "gestao-escolar",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Monorepo do sistema de gestão escolar EduGestao (apps/web + apps/api)",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "lucide-react": "^1.14.0",
-    "next": "16.2.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db",
+    "api:install": "npm --prefix apps/api install",
+    "api:setup": "npm --prefix apps/api run prisma:migrate && npm --prefix apps/api run prisma:seed",
+    "api:dev": "npm --prefix apps/api run start:dev",
+    "api:test": "npm --prefix apps/api test",
+    "web:install": "npm --prefix apps/web install",
+    "web:dev": "npm --prefix apps/web run dev"
   }
 }

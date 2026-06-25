@@ -1,0 +1,160 @@
+// Prisma schema — Sistema de Gestão Escolar (EduGestao)
+// ORM escolhido: Prisma. Banco: PostgreSQL (via Docker Compose).
+
+generator client {
+  provider      = "prisma-client-js"
+  // "native" para o ambiente local + alvo musl para a imagem Docker (Alpine).
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Papéis de acesso ao sistema.
+enum Role {
+  COORDENACAO
+  PROFESSOR
+}
+
+/// Status genérico de cadastro (matrícula ativa/inativa).
+enum Status {
+  ATIVO
+  INATIVO
+}
+
+/// Nível/etapa da educação básica.
+enum Nivel {
+  FUNDAMENTAL_I
+  FUNDAMENTAL_II
+  MEDIO
+}
+
+/// Situação acadêmica do aluno no ano letivo.
+enum SituacaoAluno {
+  CURSANDO
+  APROVADO
+  REPROVADO
+  FORMADO
+}
+
+/// Usuário autenticável (coordenação ou professor).
+model User {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Vínculo opcional com o cadastro de professor.
+  professor   Professor? @relation(fields: [professorId], references: [id])
+  professorId String?    @unique
+}
+
+/// Turma escolar (uma série/ano em um turno).
+model Turma {
+  id        String   @id @default(cuid())
+  nome      String
+  turno     String
+  sala      String   @default("A definir")
+  nivel     Nivel    @default(FUNDAMENTAL_II)
+  /// Posição na escada de progressão (1=1º ano fund ... 12=3ª série EM).
+  ordem     Int      @default(1)
+  anoLetivo Int      @default(2026)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  alunos      Aluno[]
+  disciplinas Disciplina[]
+}
+
+/// Aluno matriculado.
+model Aluno {
+  id             String   @id @default(cuid())
+  nome           String
+  email          String   @unique
+  matricula      String?  @unique
+  dataNascimento String?
+  status         Status        @default(ATIVO)
+  situacao       SituacaoAluno @default(CURSANDO)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  turma   Turma  @relation(fields: [turmaId], references: [id])
+  turmaId String
+
+  notas        Nota[]
+  frequencias  Frequencia[]
+}
+
+/// Professor (corpo docente).
+model Professor {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  telefone  String?
+  status    Status   @default(ATIVO)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  disciplinas Disciplina[]
+  user        User?
+}
+
+/// Disciplina ministrada por um professor a uma turma.
+model Disciplina {
+  id           String   @id @default(cuid())
+  nome         String
+  cargaHoraria Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  professor   Professor? @relation(fields: [professorId], references: [id])
+  professorId String?
+
+  turma   Turma?  @relation(fields: [turmaId], references: [id])
+  turmaId String?
+
+  notas       Nota[]
+  frequencias Frequencia[]
+}
+
+/// Nota de uma avaliação de um aluno em uma disciplina.
+model Nota {
+  id        String   @id @default(cuid())
+  avaliacao String
+  valor     Float
+  bimestre  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  aluno   Aluno  @relation(fields: [alunoId], references: [id])
+  alunoId String
+
+  disciplina   Disciplina @relation(fields: [disciplinaId], references: [id])
+  disciplinaId String
+
+  @@unique([alunoId, disciplinaId, avaliacao, bimestre])
+}
+
+/// Frequência de um aluno em uma disciplina.
+model Frequencia {
+  id             String   @id @default(cuid())
+  aulasPrevistas Int
+  presencas      Int
+  faltas         Int
+  percentual     Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  aluno   Aluno  @relation(fields: [alunoId], references: [id])
+  alunoId String
+
+  disciplina   Disciplina @relation(fields: [disciplinaId], references: [id])
+  disciplinaId String
+
+  @@unique([alunoId, disciplinaId])
+}
